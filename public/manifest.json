@@ -1,0 +1,9 @@
+{
+  "short_name": "Profile Manager",
+  "name": "Profile Management Application",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#8D5F8C",
+  "background_color": "#ffffff"
+}
