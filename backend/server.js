@@ -16,7 +16,7 @@ app.use(helmet());
 // CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-domain.vercel.app'] 
+    ? ['https://profile-management1.vercel.app'] 
     : ['http://localhost:3000'],
   credentials: true
 }));
