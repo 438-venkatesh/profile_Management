@@ -64,31 +64,27 @@ const ProfileForm: React.FC = () => {
   const validateForm = (): boolean => {
     const errors: Partial<ProfileFormData> = {};
 
-    // Strict Name Validation
+    // Name Validation - Required and minimum 3 characters
     if (!formData.name.trim()) {
       errors.name = 'Name is required';
-    } else if (formData.name.trim().length < 2) {
-      errors.name = 'Name must be at least 2 characters long';
+    } else if (formData.name.trim().length < 3) {
+      errors.name = 'Name must be at least 3 characters long';
     } else if (formData.name.trim().length > 50) {
       errors.name = 'Name must not exceed 50 characters';
     } else if (!/^[a-zA-Z\s\-'.]+$/.test(formData.name.trim())) {
       errors.name = 'Name can only contain letters, spaces, hyphens, apostrophes, and periods';
-    } else if (formData.name.trim().split(' ').length < 2) {
-      errors.name = 'Please enter your full name (first and last name)';
     }
 
-    // Strict Email Validation
+    // Email Validation - Required and valid format
     if (!formData.email.trim()) {
       errors.email = 'Email address is required';
     } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email.trim())) {
       errors.email = 'Please enter a valid email address';
     } else if (formData.email.trim().length > 254) {
       errors.email = 'Email address is too long';
-    } else if (!/^[^@]+@[^@]+\.[^@]+$/.test(formData.email.trim())) {
-      errors.email = 'Email must contain exactly one @ symbol and a valid domain';
     }
 
-    // Strict Age Validation
+    // Age Validation - Optional, but if provided must be valid
     if (formData.age && formData.age.trim()) {
       const ageNum = parseInt(formData.age.trim());
       if (isNaN(ageNum)) {
@@ -100,9 +96,8 @@ const ProfileForm: React.FC = () => {
       } else if (!Number.isInteger(ageNum)) {
         errors.age = 'Age must be a whole number';
       }
-    } else {
-      errors.age = 'Age is required';
     }
+    // Age is optional, so no error if empty
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -130,7 +125,7 @@ const ProfileForm: React.FC = () => {
     const profileData = {
       name: formData.name.trim(),
       email: formData.email.trim().toLowerCase(),
-      age: parseInt(formData.age.trim()),
+      age: formData.age.trim() ? parseInt(formData.age.trim()) : undefined,
     };
 
     try {
@@ -253,11 +248,11 @@ const ProfileForm: React.FC = () => {
                 <TextField
                   fullWidth
                   label="Full Name"
-                  placeholder="Enter your first and last name"
+                  placeholder="Enter your name (minimum 3 characters)"
                   value={formData.name}
                   onChange={handleInputChange('name')}
                   error={!!formErrors.name}
-                  helperText={formErrors.name || "Must be 2-50 characters, letters only, first and last name required"}
+                  helperText={formErrors.name || "Required: 3-50 characters, letters only"}
                   required
                   variant="outlined"
                   inputProps={{ maxLength: 50 }}
@@ -284,7 +279,7 @@ const ProfileForm: React.FC = () => {
                   value={formData.email}
                   onChange={handleInputChange('email')}
                   error={!!formErrors.email}
-                  helperText={formErrors.email || "Enter a valid email address"}
+                  helperText={formErrors.email || "Required: Enter a valid email address"}
                   required
                   variant="outlined"
                   inputProps={{ maxLength: 254 }}
@@ -305,14 +300,13 @@ const ProfileForm: React.FC = () => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  label="Age"
+                  label="Age (Optional)"
                   type="number"
-                  placeholder="Enter your age"
+                  placeholder="Enter your age (optional)"
                   value={formData.age}
                   onChange={handleInputChange('age')}
                   error={!!formErrors.age}
-                  helperText={formErrors.age || 'Enter your age (1-120 years)'}
-                  required
+                  helperText={formErrors.age || 'Optional: Enter your age (1-120 years)'}
                   variant="outlined"
                   inputProps={{ min: 1, max: 120 }}
                   sx={{
