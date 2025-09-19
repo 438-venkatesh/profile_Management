@@ -10,17 +10,26 @@ const profileRoutes = require('./routes/profiles');
 
 const app = express();
 
-// EMERGENCY CORS FIX - Allow all origins temporarily for debugging
+// CORS Configuration - Allow specific frontend URL
+const allowedOrigins = [
+  'https://profile-management1.vercel.app',
+  'http://localhost:3000', // For local development
+  'http://localhost:5173'  // For Vite dev server
+];
+
 app.use((req, res, next) => {
-  console.log('CORS Middleware - Origin:', req.headers.origin);
+  const origin = req.headers.origin;
+  console.log('CORS Middleware - Origin:', origin);
   console.log('CORS Middleware - Method:', req.method);
-  console.log('CORS Middleware - Headers:', req.headers);
   
-  // Set CORS headers for all requests
-  res.header('Access-Control-Allow-Origin', '*'); // Temporarily allow all origins
+  // Check if origin is allowed
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Access-Control-Allow-Origin');
-  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
   res.header('Access-Control-Max-Age', '86400');
   
   // Handle preflight requests
@@ -33,10 +42,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// Apply CORS middleware with permissive settings
+// Apply CORS middleware with specific origin settings
 app.use(cors({
-  origin: '*', // Temporarily allow all origins
-  credentials: false, // Set to false when using wildcard origin
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   optionsSuccessStatus: 200
