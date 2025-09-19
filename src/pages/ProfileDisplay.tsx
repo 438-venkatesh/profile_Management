@@ -65,7 +65,7 @@ import {
   clearSuccess,
   setProfile,
   clearProfile,
-  syncLocalChanges,
+  
   clearCache,
 } from '../store/slices/profileSlice';
 import { Profile } from '../types/profile';
