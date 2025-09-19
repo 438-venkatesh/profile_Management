@@ -166,36 +166,79 @@ const ProfileForm: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="md">
-      {/* Breadcrumb Navigation */}
-      <Box sx={{ mt: 2, mb: 1 }}>
-        <Breadcrumbs aria-label="breadcrumb">
+    <Container maxWidth="md" sx={{ px: { xs: 1, sm: 2 } }}>
+      {/* Breadcrumb Navigation - Mobile Responsive */}
+      <Box sx={{ mt: { xs: 1, sm: 2 }, mb: 1 }}>
+        <Breadcrumbs aria-label="breadcrumb" sx={{ 
+          '& .MuiBreadcrumbs-separator': { mx: { xs: 0.5, sm: 1 } }
+        }}>
           <Link
             component="button"
             variant="body2"
             onClick={() => navigate('/profile')}
-            sx={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              textDecoration: 'none',
+              fontSize: { xs: '0.75rem', sm: '0.875rem' }
+            }}
           >
-            <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
-            Profiles
+            <HomeIcon sx={{ mr: 0.5, fontSize: { xs: 16, sm: 18 } }} />
+            <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>Profiles</Box>
+            <Box sx={{ display: { xs: 'inline', sm: 'none' } }}>Home</Box>
           </Link>
-          <Typography variant="body2" color="text.primary">
+          <Typography 
+            variant="body2" 
+            color="text.primary"
+            sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
+          >
             {profile ? 'Edit Profile' : 'Create Profile'}
           </Typography>
         </Breadcrumbs>
       </Box>
 
-      <Paper elevation={3} sx={{ p: 4, mt: 2 }}>
-        {/* Header with Back Button */}
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <IconButton onClick={handleGoBack} sx={{ mr: 2 }}>
-            <ArrowBackIcon />
+      <Paper elevation={3} sx={{ 
+        p: { xs: 2, sm: 3, md: 4 }, 
+        mt: { xs: 1, sm: 2 },
+        mx: { xs: 0, sm: 0 }
+      }}>
+        {/* Header with Back Button - Mobile Responsive */}
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          mb: { xs: 2, sm: 3 },
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: { xs: 1, sm: 0 }
+        }}>
+          <IconButton 
+            onClick={handleGoBack} 
+            sx={{ 
+              mr: { xs: 0, sm: 2 },
+              alignSelf: { xs: 'flex-start', sm: 'center' }
+            }}
+          >
+            <ArrowBackIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
           </IconButton>
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="h4" component="h1" color="primary">
+          <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+            <Typography 
+              variant="h4" 
+              component="h1" 
+              color="primary"
+              sx={{ 
+                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' },
+                lineHeight: 1.2
+              }}
+            >
               {profile ? 'Update Profile' : 'Create Profile'}
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography 
+              variant="body1" 
+              color="text.secondary"
+              sx={{ 
+                fontSize: { xs: '0.875rem', sm: '1rem' },
+                display: { xs: 'none', sm: 'block' }
+              }}
+            >
               Fill in your information below to create or update your profile
             </Typography>
           </Box>
@@ -204,8 +247,8 @@ const ProfileForm: React.FC = () => {
         {loading && <LoadingSpinner message="Saving profile..." />}
 
         {!loading && (
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-            <Grid container spacing={3}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: { xs: 1, sm: 2 } }}>
+            <Grid container spacing={{ xs: 2, sm: 3 }}>
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -218,6 +261,17 @@ const ProfileForm: React.FC = () => {
                   required
                   variant="outlined"
                   inputProps={{ maxLength: 50 }}
+                  sx={{
+                    '& .MuiInputBase-root': {
+                      fontSize: { xs: '0.875rem', sm: '1rem' }
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: { xs: '0.875rem', sm: '1rem' }
+                    },
+                    '& .MuiFormHelperText-root': {
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                    }
+                  }}
                 />
               </Grid>
               
@@ -234,6 +288,17 @@ const ProfileForm: React.FC = () => {
                   required
                   variant="outlined"
                   inputProps={{ maxLength: 254 }}
+                  sx={{
+                    '& .MuiInputBase-root': {
+                      fontSize: { xs: '0.875rem', sm: '1rem' }
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: { xs: '0.875rem', sm: '1rem' }
+                    },
+                    '& .MuiFormHelperText-root': {
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                    }
+                  }}
                 />
               </Grid>
               
@@ -250,17 +315,40 @@ const ProfileForm: React.FC = () => {
                   required
                   variant="outlined"
                   inputProps={{ min: 1, max: 120 }}
+                  sx={{
+                    '& .MuiInputBase-root': {
+                      fontSize: { xs: '0.875rem', sm: '1rem' }
+                    },
+                    '& .MuiInputLabel-root': {
+                      fontSize: { xs: '0.875rem', sm: '1rem' }
+                    },
+                    '& .MuiFormHelperText-root': {
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                    }
+                  }}
                 />
               </Grid>
             </Grid>
 
-            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 4 }}>
+            {/* Mobile Responsive Button Layout */}
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: { xs: 2, sm: 2 }, 
+              justifyContent: 'center', 
+              mt: { xs: 3, sm: 4 },
+              px: { xs: 0, sm: 0 }
+            }}>
               <Button
                 type="submit"
                 variant="contained"
                 size="large"
                 disabled={loading}
-                sx={{ minWidth: 120 }}
+                sx={{ 
+                  minWidth: { xs: '100%', sm: 140 },
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
+                  py: { xs: 1.5, sm: 1.5 }
+                }}
               >
                 {profile ? 'Update Profile' : 'Create Profile'}
               </Button>
@@ -271,7 +359,11 @@ const ProfileForm: React.FC = () => {
                 size="large"
                 onClick={handleClearForm}
                 disabled={loading}
-                sx={{ minWidth: 120 }}
+                sx={{ 
+                  minWidth: { xs: '100%', sm: 120 },
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
+                  py: { xs: 1.5, sm: 1.5 }
+                }}
               >
                 Clear Form
               </Button>
@@ -282,7 +374,11 @@ const ProfileForm: React.FC = () => {
                 size="large"
                 onClick={handleGoBack}
                 disabled={loading}
-                sx={{ minWidth: 120 }}
+                sx={{ 
+                  minWidth: { xs: '100%', sm: 120 },
+                  fontSize: { xs: '0.875rem', sm: '1rem' },
+                  py: { xs: 1.5, sm: 1.5 }
+                }}
               >
                 Cancel
               </Button>
