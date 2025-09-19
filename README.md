@@ -323,8 +323,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Venkatesh Ponnuru**
-- GitHub: [@venkateshponnuru](https://github.com/venkateshponnuru)
-- Email: venkatesh@example.com
+- GitHub: [@venkateshponnuru](https://github.com/438-venkatesh)
+- Email: venkateshponnuru6@gmail.com
 
 ## 🙏 Acknowledgments
 
