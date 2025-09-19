@@ -27,7 +27,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   TableSortLabel,
   TablePagination,
   MenuItem,
@@ -35,10 +34,6 @@ import {
   InputLabel,
   Select,
   Collapse,
-  CardHeader,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   ToggleButton,
   ToggleButtonGroup,
 } from '@mui/material';
@@ -53,10 +48,8 @@ import {
   CalendarToday as CalendarIcon,
   Visibility as ViewIcon,
   FilterList as FilterIcon,
-  ExpandMore as ExpandMoreIcon,
   ViewList as ListViewIcon,
   ViewModule as GridViewIcon,
-  Sort as SortIcon,
   Clear as ClearIcon,
 } from '@mui/icons-material';
 import { RootState } from '../store/store';

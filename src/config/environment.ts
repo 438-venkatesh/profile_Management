@@ -3,3 +3,4 @@ export const config = {
   ENVIRONMENT: process.env.REACT_APP_ENV || 'development',
   IS_PRODUCTION: process.env.NODE_ENV === 'production',
 };
+

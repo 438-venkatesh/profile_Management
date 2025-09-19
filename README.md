@@ -237,27 +237,39 @@ profile-management-system/
 
 ## 🚀 Deployment
 
-### Frontend Deployment (Vercel)
+For detailed step-by-step deployment instructions, see our comprehensive [**DEPLOYMENT_GUIDE.md**](./DEPLOYMENT_GUIDE.md).
+
+### Quick Deployment Overview
+
+#### Frontend Deployment (Vercel)
 ```bash
 # Install Vercel CLI
 npm i -g vercel
 
-# Deploy
+# Login and deploy
+vercel login
 vercel --prod
 ```
 
-### Backend Deployment (Heroku)
+#### Backend Deployment (Heroku)
 ```bash
 # Install Heroku CLI
 # Login to Heroku
 heroku login
 
-# Create Heroku app
+# Create and deploy
 heroku create your-app-name
-
-# Deploy
 git push heroku main
 ```
+
+#### Database Setup (MongoDB Atlas)
+1. Create MongoDB Atlas account
+2. Create cluster and database
+3. Configure network access
+4. Get connection string
+5. Set environment variables
+
+**📖 For complete deployment instructions with troubleshooting, security considerations, and multiple platform options, please refer to the [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md).**
 
 ## 🧪 Testing
 

@@ -36,3 +36,4 @@ backend.on('error', (err) => {
 frontend.on('error', (err) => {
   console.error('❌ Frontend error:', err);
 });
+

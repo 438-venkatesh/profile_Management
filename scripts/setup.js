@@ -34,3 +34,4 @@ console.log('2. Install backend dependencies: cd backend && npm install');
 console.log('3. Start backend: cd backend && npm run dev');
 console.log('4. Start frontend: npm start');
 console.log('\n🎉 Setup complete!');
+

@@ -4,7 +4,6 @@ import {
   Paper,
   Typography,
   Button,
-  Box,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Home as HomeIcon } from '@mui/icons-material';

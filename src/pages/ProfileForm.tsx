@@ -7,7 +7,6 @@ import {
   Button,
   Box,
   Grid,
-  Alert,
   IconButton,
   Breadcrumbs,
   Link,
@@ -72,7 +71,7 @@ const ProfileForm: React.FC = () => {
       errors.name = 'Name must be at least 2 characters long';
     } else if (formData.name.trim().length > 50) {
       errors.name = 'Name must not exceed 50 characters';
-    } else if (!/^[a-zA-Z\s\-'\.]+$/.test(formData.name.trim())) {
+    } else if (!/^[a-zA-Z\s\-'.]+$/.test(formData.name.trim())) {
       errors.name = 'Name can only contain letters, spaces, hyphens, apostrophes, and periods';
     } else if (formData.name.trim().split(' ').length < 2) {
       errors.name = 'Please enter your full name (first and last name)';
