@@ -10,30 +10,53 @@ const profileRoutes = require('./routes/profiles');
 
 const app = express();
 
-// Security middleware
-app.use(helmet());
-
-// CORS configuration
+// CORS configuration - MUST be before helmet and other middleware
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? [
-        'https://profile-management1.vercel.app',
-        'https://profile-management-frontend.vercel.app',
-        'https://profile-management.vercel.app'
-      ] 
-    : ['http://localhost:3000'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = process.env.NODE_ENV === 'production' 
+      ? [
+          'https://profile-management1.vercel.app',
+          'https://profile-management-frontend.vercel.app',
+          'https://profile-management.vercel.app'
+        ] 
+      : ['http://localhost:3000'];
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+  optionsSuccessStatus: 200
 };
 
+// Apply CORS middleware first
 app.use(cors(corsOptions));
 
 // Handle preflight requests explicitly
-app.options('*', cors(corsOptions));
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Max-Age', '86400');
+  res.sendStatus(200);
+});
 
-// Add CORS headers to all responses
+// Security middleware (after CORS)
+app.use(helmet({
+  crossOriginEmbedderPolicy: false, // Disable to allow CORS
+  contentSecurityPolicy: false // Disable to allow CORS
+}));
+
+// Additional CORS headers for all responses
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   const allowedOrigins = process.env.NODE_ENV === 'production' 
@@ -51,7 +74,13 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
+  res.setHeader('Access-Control-Max-Age', '86400');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
   
   next();
 });
