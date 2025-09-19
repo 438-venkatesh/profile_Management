@@ -2,7 +2,7 @@ export interface Profile {
   _id?: string;
   name: string;
   email: string;
-  age: number;
+  age?: number;
   createdAt?: string;
   updatedAt?: string;
 }
