@@ -19,7 +19,7 @@ const corsOptions = {
     const allowedOrigins = process.env.NODE_ENV === 'production' 
       ? [
           'https://profile-management1.vercel.app',
-          'https://profile-management-frontend.vercel.app',
+          'https://profile-management1.vercel.app/',
           'https://profile-management.vercel.app'
         ] 
       : ['http://localhost:3000'];
