@@ -13,18 +13,11 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
-// CORS configuration
+// Allow requests from your frontend
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? [
-        'https://profile-management1.vercel.app',
-        'https://profile-management-frontend.vercel.app',
-        'https://profile-management.vercel.app'
-      ] 
-    : ['http://localhost:3000'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: "https://profile-management1.vercel.app", // frontend domain
+  methods: ["GET", "POST", "PUT", "DELETE"],        // allowed methods
+  credentials: true                                 // if you need cookies/auth
 }));
 
 // Logging middleware
