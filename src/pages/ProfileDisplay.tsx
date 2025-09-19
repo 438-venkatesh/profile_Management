@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useOfflineSync } from '../hooks/useOfflineSync';
 import {
   Box,
   Card,
@@ -51,6 +52,10 @@ import {
   ViewList as ListViewIcon,
   ViewModule as GridViewIcon,
   Clear as ClearIcon,
+  CloudOff as OfflineIcon,
+  CloudDone as OnlineIcon,
+  Sync as SyncIcon,
+  Storage as StorageIcon,
 } from '@mui/icons-material';
 import { RootState } from '../store/store';
 import {
@@ -60,6 +65,8 @@ import {
   clearSuccess,
   setProfile,
   clearProfile,
+  syncLocalChanges,
+  clearCache,
 } from '../store/slices/profileSlice';
 import { Profile } from '../types/profile';
 
@@ -93,6 +100,7 @@ const ProfileDisplay: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { profiles, loading, error, success } = useSelector((state: RootState) => state.profile);
+  const { isOnline, syncNow, clearCache: clearCacheAction } = useOfflineSync();
   
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [profileToDelete, setProfileToDelete] = useState<Profile | null>(null);
@@ -306,12 +314,64 @@ const ProfileDisplay: React.FC = () => {
     <Box sx={{ p: 3 }}>
       {/* Header */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Profile Management
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary">
-          View, edit, and manage user profiles with advanced filtering
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+          <Box>
+            <Typography variant="h4" component="h1" gutterBottom>
+              Profile Management
+            </Typography>
+            <Typography variant="subtitle1" color="text.secondary">
+              View, edit, and manage user profiles with advanced filtering
+            </Typography>
+          </Box>
+          
+          {/* Online/Offline Status and Sync Controls */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {isOnline ? (
+                <OnlineIcon sx={{ color: 'success.main' }} />
+              ) : (
+                <OfflineIcon sx={{ color: 'warning.main' }} />
+              )}
+              <Typography variant="body2" color={isOnline ? 'success.main' : 'warning.main'}>
+                {isOnline ? 'Online' : 'Offline'}
+              </Typography>
+            </Box>
+            
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<SyncIcon />}
+              onClick={() => syncNow()}
+              disabled={loading}
+              sx={{ minWidth: 100 }}
+            >
+              Sync
+            </Button>
+            
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<StorageIcon />}
+              onClick={() => {
+                clearCacheAction();
+                dispatch(clearCache());
+              }}
+              color="secondary"
+              sx={{ minWidth: 100 }}
+            >
+              Clear Cache
+            </Button>
+          </Box>
+        </Box>
+        
+        {/* Offline Mode Notice */}
+        {!isOnline && (
+          <Alert severity="info" sx={{ mb: 2 }}>
+            <Typography variant="body2">
+              📱 <strong>Offline Mode:</strong> You're viewing cached data. Changes will sync when you're back online.
+            </Typography>
+          </Alert>
+        )}
       </Box>
 
       {/* Success/Error Messages */}

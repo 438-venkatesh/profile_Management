@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { Profile, ProfileState } from '../../types/profile';
-import { apiService } from '../../services/api';
+import { hybridProfileService } from '../../services/hybridProfileService';
 
 const initialState: ProfileState = {
   profile: null,
@@ -15,7 +15,7 @@ export const createOrUpdateProfile = createAsyncThunk(
   'profile/createOrUpdateProfile',
   async (profileData: Omit<Profile, '_id' | 'createdAt' | 'updatedAt'>, { rejectWithValue }) => {
     try {
-      const response = await apiService.createOrUpdateProfile(profileData);
+      const response = await hybridProfileService.createOrUpdateProfile(profileData);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to save profile');
@@ -27,7 +27,7 @@ export const fetchProfileByEmail = createAsyncThunk(
   'profile/fetchProfileByEmail',
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await apiService.getProfileByEmail(email);
+      const response = await hybridProfileService.getProfileByEmail(email);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to fetch profile');
@@ -39,7 +39,7 @@ export const fetchAllProfiles = createAsyncThunk(
   'profile/fetchAllProfiles',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiService.getAllProfiles();
+      const response = await hybridProfileService.getAllProfiles();
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to fetch profiles');
@@ -51,10 +51,25 @@ export const deleteProfile = createAsyncThunk(
   'profile/deleteProfile',
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await apiService.deleteProfile(email);
+      const response = await hybridProfileService.deleteProfile(email);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to delete profile');
+    }
+  }
+);
+
+// Sync local changes when back online
+export const syncLocalChanges = createAsyncThunk(
+  'profile/syncLocalChanges',
+  async (_, { rejectWithValue }) => {
+    try {
+      await hybridProfileService.syncLocalChanges();
+      // After sync, refresh all profiles
+      const response = await hybridProfileService.getAllProfiles();
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to sync local changes');
     }
   }
 );
@@ -79,6 +94,11 @@ const profileSlice = createSlice({
     },
     clearProfiles: (state) => {
       state.profiles = [];
+    },
+    clearCache: (state) => {
+      // Clear cache action - the actual clearing is handled by the service
+      state.profiles = [];
+      state.profile = null;
     },
   },
   extraReducers: (builder) => {
@@ -165,8 +185,26 @@ const profileSlice = createSlice({
         state.error = action.payload as string;
         state.success = null;
       });
+
+    // Sync Local Changes
+    builder
+      .addCase(syncLocalChanges.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(syncLocalChanges.fulfilled, (state, action) => {
+        state.loading = false;
+        state.profiles = action.payload.data || [];
+        state.success = 'Local changes synced successfully';
+        state.error = null;
+      })
+      .addCase(syncLocalChanges.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+        state.success = null;
+      });
   },
 });
 
-export const { clearError, clearSuccess, clearProfile, setProfile, clearProfiles } = profileSlice.actions;
+export const { clearError, clearSuccess, clearProfile, setProfile, clearProfiles, clearCache } = profileSlice.actions;
 export default profileSlice.reducer;

@@ -10,16 +10,63 @@ const profileRoutes = require('./routes/profiles');
 
 const app = express();
 
-// Security middleware
-app.use(helmet());
+// CORS Configuration - Allow specific frontend URL
+const allowedOrigins = [
+  'https://profile-management1.vercel.app',
+  'http://localhost:3000', // For local development
+  'http://localhost:5173'  // For Vite dev server
+];
 
-// CORS configuration
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  console.log('CORS Middleware - Origin:', origin);
+  console.log('CORS Middleware - Method:', req.method);
+  
+  // Check if origin is allowed
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.header('Access-Control-Max-Age', '86400');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    console.log('Handling OPTIONS preflight request');
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
+
+// Apply CORS middleware with specific origin settings
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-domain.vercel.app'] 
-    : ['http://localhost:3000'],
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  optionsSuccessStatus: 200
 }));
+
+// Security middleware (after CORS)
+app.use(helmet({
+  crossOriginEmbedderPolicy: false, // Disable to allow CORS
+  contentSecurityPolicy: false // Disable to allow CORS
+}));
+
+// CORS is already handled above - no need for additional middleware
 
 // Logging middleware
 app.use(morgan('combined'));
